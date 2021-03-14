@@ -1,4 +1,4 @@
-// nex.js components
+// next.js components
 import Head from "next/head";
 import ErrorPage from "next/error";
 // app components
@@ -46,7 +46,7 @@ export default function Home({ news, error }) {
       <section>
         <h2 className={utilStyles.headingLg}>News</h2>
         {error ? (
-          <Error statusCode={error.statusCode} />
+          <ErrorPage statusCode={error.statusCode} />
         ) : (
           <>
             {/* card  */}
