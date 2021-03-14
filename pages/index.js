@@ -1,20 +1,23 @@
+import { useEffect, useState, useRef } from "react";
 // next.js components
 import Head from "next/head";
 import ErrorPage from "next/error";
 // app components
 import Layout from "../components/layout";
+// utils functions
+// import fetchQuery from "../utils/fetch";
 // styles
 import styles from "../styles/styles.module.scss";
 // utility styles
 import utilStyles from "../styles/utils.module.scss";
 
 // api endpoint
-const URL = "http://80.240.21.204:1337/news?skip=12&limit=10";
+const URL = "http://80.240.21.204:1337/news?skip=12&";
 
 // add fetched external data from API to Home props
-export async function getServerSideProps(context) {
+export async function getServerSideProps() {
   try {
-    const res = await fetch(URL);
+    const res = await fetch(`${URL}limit=10`);
 
     const data = await res.json();
 
@@ -26,16 +29,50 @@ export async function getServerSideProps(context) {
 
     return {
       props: {
-        news: data.news,
+        initialData: data.news,
       },
     };
   } catch (error) {
-    return { error: { statusCode: err.status } };
+    return { error };
   }
 }
 
-export default function Home({ news, error }) {
-  console.log(news);
+export default function Home({ initialData, error }) {
+  // app state
+  const [limit, setLimit] = useState(10);
+  const [news, setNews] = useState(initialData);
+  console.log(initialData);
+
+  const loadingRef = useRef(null);
+
+  const handleObserver = (entries, observer) => {
+    // console.log("entry:", ...entry);
+    // console.log("observer:", observer);
+    entries.forEach(async (entry) => {
+      if (entry.intersectionRatio > 0) {
+        let newLimit = limit + 10;
+        // console.log("old limit", limit);
+        // console.log("new limit", newLimit);
+
+        console.log("in the view");
+        const res = await fetch(`${URL}limit=${newLimit}`);
+
+        const newData = await res.json();
+
+        setLimit(newLimit);
+        console.log(limit);
+        setNews(newData.news);
+      } else {
+        console.log("out of view");
+      }
+    });
+  };
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(handleObserver);
+
+    observer.observe(loadingRef.current);
+  }, []);
 
   return (
     <Layout home>
@@ -82,6 +119,9 @@ export default function Home({ news, error }) {
             ))}
           </>
         )}
+        <div ref={loadingRef}>
+          <p>Loading...</p>
+        </div>
       </section>
     </Layout>
   );
