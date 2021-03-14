@@ -3,8 +3,10 @@ import Head from "next/head";
 import ErrorPage from "next/error";
 // app components
 import Layout from "../components/layout";
+// styles
+import styles from "../styles/styles.module.scss";
 // utility styles
-import utilStyles from "../styles/utils.module.css";
+import utilStyles from "../styles/utils.module.scss";
 
 // api endpoint
 const URL = "http://80.240.21.204:1337/news?skip=12&limit=10";
@@ -41,27 +43,44 @@ export default function Home({ news, error }) {
         <title>News API</title>
         <meta name="description" content="A techSquad Next.js task" />
       </Head>
-      <section className={`${utilStyles.headingMd} ${utilStyles.padding1px}`}>
+      <section>
         <h2 className={utilStyles.headingLg}>News</h2>
         {error ? (
           <Error statusCode={error.statusCode} />
         ) : (
-          <ul className={utilStyles.list}>
-            {news.map(({ _id, title, source, date, keywords }) => (
-              <li className={utilStyles.listItem} key={_id}>
-                <img src={source.url} alt={source.title} />
-                <span>{source.title}</span>
-                <span>{title}</span>
-                <span>{date}</span>
-
-                {keywords.map(({ _id, name, type }) => (
-                  <span className="keyword" key={_id}>
-                    {name}{" "}
-                  </span>
-                ))}
-              </li>
+          <>
+            {/* card  */}
+            {news.map(({ _id, title, source, created_at, keywords }) => (
+              <div className={styles.card} key={_id}>
+                {/* card heading */}
+                <div className={styles.card__heading}>
+                  <div style={{ marginRight: "30px" }}>
+                    <img
+                      height={128}
+                      width={128}
+                      className={`${utilStyles.imgResponsive} ${utilStyles.borderCircle}`}
+                      src={source.url}
+                      alt={source.title}
+                    />
+                  </div>
+                  <p className={utilStyles.headingMd}>{source.title}</p>
+                </div>
+                {/* card content */}
+                <div className={styles.card__content}>
+                  <h2>{title}</h2>
+                  <p>{created_at}</p>
+                </div>
+                {/* card keywords */}
+                <div className={styles.keywords}>
+                  <ul className={utilStyles.list}>
+                    {keywords.map(({ _id, name, type }) => (
+                      <li key={_id}>{name}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
             ))}
-          </ul>
+          </>
         )}
       </section>
     </Layout>

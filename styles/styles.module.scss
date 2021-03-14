@@ -1,0 +1,53 @@
+@import "./variables";
+@import "./mixins";
+
+.card {
+  background-color: white;
+  border-radius: 1rem;
+  margin-bottom: 1rem;
+  padding: 1rem 2rem;
+  @include flex(column);
+
+  // & > *:not(:last-child) {
+  // }
+
+  &__heading {
+    width: 100%;
+    @include flex(row, flex-start);
+
+    p {
+      font-weight: bold;
+    }
+  }
+
+  &__content {
+    @include flex(column, center, baseline);
+
+    p {
+      width: 100%;
+      padding-bottom: 2rem;
+      color: $date_clr;
+      border-bottom: 1px solid $date_clr;
+    }
+  }
+}
+
+.keywords {
+  width: 100%;
+
+  ul {
+    flex-wrap: wrap;
+    @include flex(row, flex-start, center);
+
+    & > *:not(:last-child) {
+      margin-right: 10px;
+    }
+
+    li {
+      border: 1px solid black;
+      border-radius: 1rem;
+      padding: 0.2rem 0.5rem;
+      margin-bottom: 10px;
+    }
+  }
+}
